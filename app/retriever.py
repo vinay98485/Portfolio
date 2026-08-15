@@ -100,18 +100,28 @@ class PortfolioRetriever:
             score_threshold if score_threshold is not None else config.similarity_threshold
         )
 
-        logger.info("Connecting to ChromaDB at %s", self.chroma_dir)
-        self._client = chromadb.PersistentClient(path=str(self.chroma_dir))
-        self._collection = self._client.get_collection(name=self.collection_name)
-        logger.info(
-            "Collection '%s' loaded — %d vectors",
-            self.collection_name,
-            self._collection.count(),
-        )
+        self._client_instance = None
+        self._collection_instance = None
+        self._model_instance = None
 
-        logger.info("Loading embedding model: %s", self.model_name)
-        self._model = SentenceTransformer(self.model_name)
-        logger.info("Retriever ready (top_k=%d, threshold=%.2f)", self.top_k, self.score_threshold)
+        logger.info("Retriever initialized (lazy loading enabled)")
+
+    @property
+    def _collection(self) -> Any:
+        if self._collection_instance is None:
+            logger.info("Connecting to ChromaDB at %s", self.chroma_dir)
+            self._client_instance = chromadb.PersistentClient(path=str(self.chroma_dir))
+            self._collection_instance = self._client_instance.get_collection(name=self.collection_name)
+            logger.info("ChromaDB connected (collection='%s', count=%d)", self.collection_name, self._collection_instance.count())
+        return self._collection_instance
+
+    @property
+    def _model(self) -> Any:
+        if self._model_instance is None:
+            logger.info("Loading embedding model: %s", self.model_name)
+            self._model_instance = SentenceTransformer(self.model_name)
+            logger.info("Embedding model loaded (%s)", self.model_name)
+        return self._model_instance
 
     # ------------------------------------------------------------------
     # Public API

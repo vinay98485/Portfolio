@@ -10,8 +10,20 @@ Exposes:
 
 from __future__ import annotations
 
+import gc
 import logging
+import os
+import time
 from typing import Any
+
+try:
+    import psutil
+    def get_memory_mb() -> float:
+        process = psutil.Process(os.getpid())
+        return process.memory_info().rss / (1024 * 1024)
+except ImportError:
+    def get_memory_mb() -> float:
+        return 0.0
 
 from app.cache import AnswerCache
 from app.config import config
@@ -40,31 +52,11 @@ class RAGPipeline:
             ttl_hours=config.cache_ttl_hours,
             enabled=config.cache_enabled,
         )
-        logger.info("RAGPipeline ready")
+        logger.info("RAGPipeline ready (Memory: %.2f MB)", get_memory_mb())
 
     def ask_question(self, question: str, use_cache: bool = True, debug: bool = False) -> dict[str, Any]:
-        """Execute the RAG pipeline flow for a user question.
-
-        Flow:
-            Question
-             ↓
-            Retriever
-             ↓
-            Cache Check
-             ↓
-            Generator
-             ↓
-            Cache Store
-             ↓
-            Return Response
-
-        Returns:
-            dict: {
-                "answer": str,
-                "sources": list[str],
-                "cached": bool
-            }
-        """
+        """Execute the RAG pipeline flow for a user question."""
+        start_total = time.time()
         question = (question or "").strip()
         if not question:
             return {
@@ -73,13 +65,15 @@ class RAGPipeline:
                 "cached": False,
             }
 
-        logger.info("RAG_PIPELINE question='%s'", question[:80])
+        logger.info("START pipeline question='%s' | Memory: %.2f MB", question[:80], get_memory_mb())
 
         # Step 1: Cache Check
         if use_cache and self.cache.enabled:
             cached_result = self.cache.get(question)
             if cached_result is not None:
+                total_ms = int(round((time.time() - start_total) * 1000))
                 logger.info("CACHE_HIT for pipeline query")
+                logger.info("TOTAL_TIME: %dms (cached)", total_ms)
                 return {
                     "answer": cached_result["answer"],
                     "sources": cached_result["sources"],
@@ -87,15 +81,24 @@ class RAGPipeline:
                 }
 
         # Step 2: Retrieve
+        logger.info("BEFORE_RETRIEVAL Memory: %.2f MB", get_memory_mb())
+        start_retrieval = time.time()
         logger.info("Retrieving context from vector store...")
         retrieval = self.retriever.query(question, debug=debug)
+        retrieval_ms = int(round((time.time() - start_retrieval) * 1000))
+        logger.info("RETRIEVAL_TIME: %dms", retrieval_ms)
+        logger.info("AFTER_RETRIEVAL Memory: %.2f MB", get_memory_mb())
 
         # Step 3: Generator
+        start_generation = time.time()
         result: GenerationResult = self.generator.generate(
             question=question,
             retrieval_results=retrieval.results,
             retrieval_found=retrieval.found,
         )
+        generation_ms = int(round((time.time() - start_generation) * 1000))
+        logger.info("GENERATION_TIME: %dms", generation_ms)
+        logger.info("AFTER_GENERATION Memory: %.2f MB", get_memory_mb())
 
         # Step 4: Cache Store
         if use_cache and self.cache.enabled:
@@ -108,7 +111,14 @@ class RAGPipeline:
             else:
                 logger.warning("CACHE_SKIPPED for uncacheable generation result")
 
-        # Step 5: Return Response
+        total_ms = int(round((time.time() - start_total) * 1000))
+        logger.info("TOTAL_TIME: %dms", total_ms)
+
+        # Step 5: Clean up memory
+        gc.collect()
+        logger.info("AFTER_GC Memory: %.2f MB", get_memory_mb())
+
+        # Step 6: Return Response
         return {
             "answer": result.answer,
             "sources": result.sources,
@@ -129,14 +139,5 @@ def get_pipeline() -> RAGPipeline:
 
 
 def ask_question(question: str, use_cache: bool = True, debug: bool = False) -> dict[str, Any]:
-    """Single function interface for asking a question through the RAG pipeline.
-
-    Returns:
-        {
-            "answer": "...",
-            "sources": [],
-            "cached": true/false
-        }
-    """
     pipeline = get_pipeline()
     return pipeline.ask_question(question, use_cache=use_cache, debug=debug)

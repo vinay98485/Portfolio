@@ -228,15 +228,15 @@ class PortfolioGenerator:
                 "GEMINI_API_KEY is not set. Add it to .env or pass api_key=."
             )
 
-        self._client = genai.Client(api_key=self.api_key)
+        self._client_instance = None
+        logger.info("Generator initialized (lazy loading enabled)")
 
-        logger.info(
-            "Generator ready — model=%s, max_tokens=%d, temp=%.2f, max_chunks=%d",
-            self.model_name,
-            self.max_output_tokens,
-            self.temperature,
-            self.max_context_chunks,
-        )
+    @property
+    def _client(self) -> Any:
+        if self._client_instance is None:
+            self._client_instance = genai.Client(api_key=self.api_key)
+            logger.info("Gemini client initialized (%s)", self.model_name)
+        return self._client_instance
 
     def _call_gemini(self, user_prompt: str) -> str:
         """Call Gemini API with exponential-backoff retry."""

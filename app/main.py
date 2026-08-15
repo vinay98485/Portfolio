@@ -122,11 +122,13 @@ class AskResponse(BaseModel):
     response_time_ms: int
 
 
-# 7. Startup Event — log config summary without leaking secrets
+# 7. Startup Event — log config summary and memory usage
 
 @app.on_event("startup")
 def on_startup() -> None:
-    """Log application configuration on startup (no secrets)."""
+    """Log application configuration on startup."""
+    from app.rag_pipeline import get_memory_mb
+    
     logger.info("=" * 60)
     logger.info("Vinay Portfolio AI Assistant v1.0.0 — Starting")
     logger.info(f"  Gemini Model     : {config.gemini_model}")
@@ -137,6 +139,8 @@ def on_startup() -> None:
     logger.info(f"  Cache Enabled    : {config.cache_enabled}")
     logger.info(f"  Cache TTL Hours  : {config.cache_ttl_hours}")
     logger.info(f"  Gemini API Key   : {'configured' if config.gemini_api_key else 'MISSING'}")
+    logger.info("=" * 60)
+    logger.info("Startup complete! Memory usage: %.2f MB", get_memory_mb())
     logger.info("=" * 60)
 
 
