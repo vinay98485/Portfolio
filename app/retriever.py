@@ -1,6 +1,6 @@
 """Retrieval layer for the Portfolio RAG Assistant.
 
-Accepts a user question, generates an embedding with all-MiniLM-L6-v2,
+Accepts a user question, generates an embedding with paraphrase-MiniLM-L3-v2,
 queries the ChromaDB vector store, and returns structured JSON results.
 
 No LLM is called — this module performs retrieval only.

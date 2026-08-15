@@ -3,7 +3,7 @@
 Manages and validates all environment variables and configuration settings:
 - Required: GEMINI_API_KEY
 - Defaults:
-  - EMBEDDING_MODEL ("sentence-transformers/all-MiniLM-L6-v2")
+  - EMBEDDING_MODEL ("sentence-transformers/paraphrase-MiniLM-L3-v2")
   - CHROMA_DB_PATH ("database/chroma_db")
   - TOP_K (5)
   - SCORE_THRESHOLD (1.6)
@@ -41,7 +41,7 @@ class Config:
 
     # Vector Store & Embedding Model
     collection_name: str = "portfolio_knowledge"
-    embedding_model: str = "sentence-transformers/all-MiniLM-L6-v2"
+    embedding_model: str = "sentence-transformers/paraphrase-MiniLM-L3-v2"
 
     # Gemini LLM Settings
     gemini_api_key: str = field(repr=False, default="")
@@ -106,7 +106,7 @@ def load_config(validate: bool = True, env: dict[str, str] | None = None) -> Con
 
     # Embedding model name
     emb_model = get_env("EMBEDDING_MODEL") or get_env(
-        "EMBEDDING_MODEL_NAME", "sentence-transformers/all-MiniLM-L6-v2"
+        "EMBEDDING_MODEL_NAME", "sentence-transformers/paraphrase-MiniLM-L3-v2"
     )
 
     # ChromaDB path

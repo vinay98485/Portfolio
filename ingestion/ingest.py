@@ -1,7 +1,7 @@
 """Knowledge base ingestion pipeline for Portfolio RAG Assistant.
 
 Reads markdown files recursively from knowledge/, chunks them,
-generates embeddings with sentence-transformers/all-MiniLM-L6-v2,
+generates embeddings with sentence-transformers/paraphrase-MiniLM-L3-v2,
 and stores them in database/chroma_db.
 """
 
@@ -379,6 +379,7 @@ def ingest(
         raise RuntimeError(f"No markdown documents found under {k_dir}")
 
     collection = get_collection(c_dir, c_name)
+    logging.info("Active embedding model: %s", config.embedding_model_name)
     model = SentenceTransformer(config.embedding_model_name)
 
     total_chunks = 0

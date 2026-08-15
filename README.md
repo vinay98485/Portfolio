@@ -245,7 +245,7 @@ Copy `.env.example` to `.env` for local setup. In production (Docker / Render), 
 | --- | --- | --- |
 | `GEMINI_API_KEY` | Google Gemini API Key | **Required** |
 | `GEMINI_MODEL` | Gemini LLM Model | `gemini-3.7-flash` |
-| `EMBEDDING_MODEL` | SentenceTransformer model | `sentence-transformers/all-MiniLM-L6-v2` |
+| `EMBEDDING_MODEL` | SentenceTransformer model | `sentence-transformers/paraphrase-MiniLM-L3-v2` |
 | `CHROMA_DB_PATH` | Path to persistent vector database | `database/chroma_db` |
 | `CACHE_ENABLED` | Enable answer caching | `true` |
 | `CACHE_TTL_HOURS` | Cache TTL in hours | `168` |

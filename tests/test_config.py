@@ -39,7 +39,7 @@ class TestConfigValidation(unittest.TestCase):
         }
         cfg = load_config(validate=True, env=env)
 
-        self.assertEqual(cfg.embedding_model, "sentence-transformers/all-MiniLM-L6-v2")
+        self.assertEqual(cfg.embedding_model, "sentence-transformers/paraphrase-MiniLM-L3-v2")
         self.assertEqual(cfg.chroma_db_path, ROOT_DIR / "database" / "chroma_db")
         self.assertEqual(cfg.top_k, 5)
         self.assertEqual(cfg.score_threshold, 1.6)
@@ -47,7 +47,7 @@ class TestConfigValidation(unittest.TestCase):
         self.assertEqual(cfg.cache_ttl_hours, 168)
 
         # Backward compatibility properties
-        self.assertEqual(cfg.embedding_model_name, "sentence-transformers/all-MiniLM-L6-v2")
+        self.assertEqual(cfg.embedding_model_name, "sentence-transformers/paraphrase-MiniLM-L3-v2")
         self.assertEqual(cfg.chroma_db_dir, ROOT_DIR / "database" / "chroma_db")
         self.assertEqual(cfg.similarity_threshold, 1.6)
 
