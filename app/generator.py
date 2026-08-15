@@ -351,7 +351,7 @@ class PortfolioGenerator:
         user_prompt = (
             f"Context:\n\n{context}\n\n---\n\n"
             f"Question: {question}\n\n"
-            f"Answer based ONLY on the context above."
+            f"Answer based ONLY on the context above. Be concise and limit your answer to a maximum of 200 words."
         )
 
         try:

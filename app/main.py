@@ -2,7 +2,7 @@ import logging
 import time
 from typing import Any
 
-from fastapi import FastAPI, HTTPException, Request, Response
+from fastapi import FastAPI, HTTPException, Request, Response, BackgroundTasks
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -12,7 +12,7 @@ from slowapi.errors import RateLimitExceeded
 from slowapi.util import get_remote_address
 
 from app.config import config
-from app.rag_pipeline import ask_question
+from app.rag_pipeline import ask_question, get_pipeline
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -28,6 +28,8 @@ app = FastAPI(
 )
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+
 
 # 3. CORS Middleware
 app.add_middleware(
@@ -88,8 +90,7 @@ async def global_exception_handler(request: Request, exc: Exception) -> JSONResp
     return JSONResponse(
         status_code=500,
         content={
-            "detail": "An internal server error occurred.",
-            "error": str(exc),
+            "detail": "Internal server error. Please try again later.",
         },
     )
 
@@ -184,7 +185,7 @@ def health_check(response: Response) -> dict[str, Any]:
 
 @app.post("/ask", response_model=AskResponse)
 @limiter.limit("10/minute")
-def ask_portfolio_question(request: Request, ask_req: AskRequest) -> dict[str, Any]:
+def ask_portfolio_question(request: Request, ask_req: AskRequest, background_tasks: BackgroundTasks) -> dict[str, Any]:
     """Ask a question to the Portfolio RAG Assistant with rate limiting (10 req/min per IP)."""
     start_time = time.time()
     question_len = len(ask_req.question)
@@ -192,23 +193,18 @@ def ask_portfolio_question(request: Request, ask_req: AskRequest) -> dict[str, A
     
     logger.info(f"POST /ask from IP={client_ip} (len={question_len}): '{ask_req.question[:60]}'")
 
-    try:
-        result = ask_question(ask_req.question)
-        elapsed_ms = int(round((time.time() - start_time) * 1000))
-        logger.info(f"RAG question processed for IP={client_ip} in {elapsed_ms}ms | cached={result.get('cached')}")
+    result = ask_question(ask_req.question)
+    elapsed_ms = int(round((time.time() - start_time) * 1000))
+    logger.info(f"RAG question processed for IP={client_ip} in {elapsed_ms}ms | cached={result.get('cached')}")
 
-        return {
-            "answer": result["answer"],
-            "sources": result["sources"],
-            "cached": result["cached"],
-            "response_time_ms": elapsed_ms,
-        }
-    except Exception as e:
-        logger.error(f"Failed to process RAG pipeline request for IP={client_ip}: {str(e)}", exc_info=True)
-        raise HTTPException(
-            status_code=500,
-            detail=f"An error occurred while executing the RAG pipeline: {str(e)}",
-        )
+    background_tasks.add_task(get_pipeline().cache.purge_expired)
+
+    return {
+        "answer": result["answer"],
+        "sources": result["sources"],
+        "cached": result["cached"],
+        "response_time_ms": elapsed_ms,
+    }
 
 
 @app.get("/sample-questions", response_model=list[str])

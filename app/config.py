@@ -5,7 +5,7 @@ Manages and validates all environment variables and configuration settings:
 - Defaults:
   - GEMINI_EMBEDDING_MODEL ("gemini-embedding-001")
   - CHROMA_DB_PATH ("database/chroma_db")
-  - TOP_K (5)
+  - TOP_K (3)
   - SCORE_THRESHOLD (1.6)
   - CACHE_ENABLED (true)
   - CACHE_TTL_HOURS (168)
@@ -50,7 +50,7 @@ class Config:
     temperature: float = 0.2
 
     # Retrieval Settings
-    top_k: int = 5
+    top_k: int = 3
     score_threshold: float = 1.6
     max_context_chunks: int = 5
 
@@ -122,7 +122,7 @@ def load_config(validate: bool = True, env: dict[str, str] | None = None) -> Con
         k_dir = ROOT_DIR / k_dir
 
     # Top K
-    top_k_str = get_env("TOP_K", "5")
+    top_k_str = get_env("TOP_K", "3")
     try:
         top_k = int(top_k_str)
     except ValueError:

@@ -29,9 +29,9 @@ logger = logging.getLogger(__name__)
 def normalize_question(question: str) -> str:
     """Produce a stable cache key from a question string."""
     text = question.lower().strip()
+    text = re.sub(r"[^\w\s]", "", text)
     text = re.sub(r"\s+", " ", text)
-    text = text.rstrip("?!.")
-    return text
+    return text.strip()
 
 
 def cache_key(question: str) -> str:

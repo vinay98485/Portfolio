@@ -150,12 +150,8 @@ def test_normalize_question() -> None:
         normalize_question("HELLO WORLD") == "hello world",
     )
     check(
-        "Removes trailing ?",
-        normalize_question("What is AI?") == "what is ai",
-    )
-    check(
-        "Removes trailing !",
-        normalize_question("Great!") == "great",
+        "Removes all punctuation",
+        normalize_question("What is AI, exactly?!") == "what is ai exactly",
     )
     check(
         "Collapses whitespace",

@@ -41,7 +41,7 @@ class TestConfigValidation(unittest.TestCase):
 
         self.assertEqual(cfg.gemini_embedding_model, "gemini-embedding-001")
         self.assertEqual(cfg.chroma_db_path, ROOT_DIR / "database" / "chroma_db")
-        self.assertEqual(cfg.top_k, 5)
+        self.assertEqual(cfg.top_k, 3)
         self.assertEqual(cfg.score_threshold, 1.6)
         self.assertTrue(cfg.cache_enabled)
         self.assertEqual(cfg.cache_ttl_hours, 168)

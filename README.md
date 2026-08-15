@@ -249,7 +249,7 @@ Copy `.env.example` to `.env` for local setup. In production (Docker / Render), 
 | `CHROMA_DB_PATH` | Path to persistent vector database | `database/chroma_db` |
 | `CACHE_ENABLED` | Enable answer caching | `true` |
 | `CACHE_TTL_HOURS` | Cache TTL in hours | `168` |
-| `TOP_K` | Number of chunks retrieved | `5` |
+| `TOP_K` | Number of chunks retrieved | `3` |
 | `SCORE_THRESHOLD` | L2 distance threshold | `1.6` |
 | `LOG_LEVEL` | Application logging verbosity | `INFO` |
 

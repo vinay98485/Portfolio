@@ -14,7 +14,7 @@ class TestAPIProtection(unittest.TestCase):
     """Test suite for API endpoints, rate limiting, security headers, and validation."""
 
     def setUp(self) -> None:
-        self.client = TestClient(app)
+        self.client = TestClient(app, raise_server_exceptions=False)
 
     @patch("app.main.ask_question")
     def test_allowed_request(self, mock_ask_question: unittest.mock.MagicMock) -> None:
@@ -84,6 +84,22 @@ class TestAPIProtection(unittest.TestCase):
         # The first 10 requests should succeed (200), and subsequent requests should return 429
         self.assertIn(429, responses)
         self.assertEqual(responses.count(429), 2)
+
+    @patch("app.main.ask_question")
+    def test_unexpected_exception(self, mock_ask_question: unittest.mock.MagicMock) -> None:
+        """Verify that unexpected exceptions return 500 and clean JSON."""
+        mock_ask_question.side_effect = ValueError("Something broke deeply inside")
+        
+        # Reset limiter to prevent 429 Too Many Requests
+        limiter.reset()
+        
+        response = self.client.post("/ask", json={"question": "Crash test?"})
+        self.assertEqual(response.status_code, 500)
+        
+        data = response.json()
+        self.assertIn("detail", data)
+        self.assertNotIn("Something broke deeply inside", data["detail"])
+        self.assertEqual(data["detail"], "Internal server error. Please try again later.")
 
 
 if __name__ == "__main__":

@@ -13,6 +13,7 @@ import json
 import logging
 import math
 import threading
+import time
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any
@@ -163,8 +164,10 @@ class PortfolioRetriever:
 
         logger.info("Query: '%s' | top_k=%d | threshold=%.2f", question, k, threshold)
 
-        # Generate embedding
+        start_emb = time.time()
         embedding = self._model.embed_query(question)
+        emb_ms = int(round((time.time() - start_emb) * 1000))
+        logger.info("EMBEDDING_TIME_MS: %dms", emb_ms)
 
         # Determine filter
         q_lower = question.lower()
