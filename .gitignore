@@ -1,0 +1,9 @@
+.DS_Store
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.pytest_cache/
+.env
+answer_cache.json
+*.log

@@ -1,0 +1,21 @@
+# render.yaml — Render Blueprint for Portfolio RAG Assistant
+# Docs: https://docs.render.com/blueprint-spec
+
+services:
+  - type: web
+    name: vinay-portfolio-rag
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: GEMINI_API_KEY
+        sync: false                   # Must be set manually in Render dashboard
+      - key: GEMINI_MODEL
+        value: gemini-3.7-flash
+      - key: CACHE_ENABLED
+        value: "true"
+      - key: CACHE_TTL_HOURS
+        value: "168"
+      - key: LOG_LEVEL
+        value: INFO
