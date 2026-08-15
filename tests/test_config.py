@@ -39,7 +39,7 @@ class TestConfigValidation(unittest.TestCase):
         }
         cfg = load_config(validate=True, env=env)
 
-        self.assertEqual(cfg.embedding_model, "sentence-transformers/paraphrase-MiniLM-L3-v2")
+        self.assertEqual(cfg.gemini_embedding_model, "gemini-embedding-001")
         self.assertEqual(cfg.chroma_db_path, ROOT_DIR / "database" / "chroma_db")
         self.assertEqual(cfg.top_k, 5)
         self.assertEqual(cfg.score_threshold, 1.6)
@@ -47,14 +47,14 @@ class TestConfigValidation(unittest.TestCase):
         self.assertEqual(cfg.cache_ttl_hours, 168)
 
         # Backward compatibility properties
-        self.assertEqual(cfg.embedding_model_name, "sentence-transformers/paraphrase-MiniLM-L3-v2")
+        self.assertEqual(cfg.embedding_model_name, "gemini-embedding-001")
         self.assertEqual(cfg.chroma_db_dir, ROOT_DIR / "database" / "chroma_db")
         self.assertEqual(cfg.similarity_threshold, 1.6)
 
     def test_custom_env_overrides(self) -> None:
         env = {
             "GEMINI_API_KEY": "override_key",
-            "EMBEDDING_MODEL": "custom/embedding-model",
+            "GEMINI_EMBEDDING_MODEL": "custom/embedding-model",
             "CHROMA_DB_PATH": "custom_db_path",
             "TOP_K": "10",
             "SCORE_THRESHOLD": "0.85",
@@ -64,7 +64,7 @@ class TestConfigValidation(unittest.TestCase):
         cfg = load_config(validate=True, env=env)
 
         self.assertEqual(cfg.gemini_api_key, "override_key")
-        self.assertEqual(cfg.embedding_model, "custom/embedding-model")
+        self.assertEqual(cfg.gemini_embedding_model, "custom/embedding-model")
         self.assertEqual(cfg.chroma_db_path, ROOT_DIR / "custom_db_path")
         self.assertEqual(cfg.top_k, 10)
         self.assertEqual(cfg.score_threshold, 0.85)

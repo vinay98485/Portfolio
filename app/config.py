@@ -3,7 +3,7 @@
 Manages and validates all environment variables and configuration settings:
 - Required: GEMINI_API_KEY
 - Defaults:
-  - EMBEDDING_MODEL ("sentence-transformers/paraphrase-MiniLM-L3-v2")
+  - GEMINI_EMBEDDING_MODEL ("gemini-embedding-001")
   - CHROMA_DB_PATH ("database/chroma_db")
   - TOP_K (5)
   - SCORE_THRESHOLD (1.6)
@@ -41,7 +41,7 @@ class Config:
 
     # Vector Store & Embedding Model
     collection_name: str = "portfolio_knowledge"
-    embedding_model: str = "sentence-transformers/paraphrase-MiniLM-L3-v2"
+    gemini_embedding_model: str = "gemini-embedding-001"
 
     # Gemini LLM Settings
     gemini_api_key: str = field(repr=False, default="")
@@ -68,7 +68,7 @@ class Config:
 
     @property
     def embedding_model_name(self) -> str:
-        return self.embedding_model
+        return self.gemini_embedding_model
 
     @property
     def similarity_threshold(self) -> float:
@@ -105,8 +105,8 @@ def load_config(validate: bool = True, env: dict[str, str] | None = None) -> Con
         )
 
     # Embedding model name
-    emb_model = get_env("EMBEDDING_MODEL") or get_env(
-        "EMBEDDING_MODEL_NAME", "sentence-transformers/paraphrase-MiniLM-L3-v2"
+    emb_model = get_env("GEMINI_EMBEDDING_MODEL") or get_env(
+        "EMBEDDING_MODEL_NAME", "gemini-embedding-001"
     )
 
     # ChromaDB path
@@ -149,7 +149,7 @@ def load_config(validate: bool = True, env: dict[str, str] | None = None) -> Con
     return Config(
         gemini_api_key=api_key,
         gemini_model=get_env("GEMINI_MODEL", "gemini-3.7-flash"),
-        embedding_model=emb_model,
+        gemini_embedding_model=emb_model,
         chroma_db_path=chroma_path,
         knowledge_dir=k_dir,
         top_k=top_k,

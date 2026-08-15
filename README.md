@@ -14,7 +14,7 @@ Built with **ChromaDB** (vector store), **Sentence Transformers** (embeddings), 
 │   ├── __init__.py
 │   ├── config.py           # Centralised configuration
 │   ├── rag_pipeline.py     # Single interface ask_question() & service pipeline
-│   ├── retriever.py        # Vector store retriever (ChromaDB + sentence-transformers)
+│   ├── retriever.py        # Vector store retriever (ChromaDB + Gemini API)
 │   ├── generator.py        # LLM answer generator (Gemini)
 │   └── cache.py            # File-backed answer cache
 │
@@ -233,7 +233,7 @@ User Query / Client Request
         ▼
    RAG Pipeline Service (app/rag_pipeline.py)
    ├── Answer Cache (app/cache.py — answer_cache.json)
-   ├── Retriever (app/retriever.py — ChromaDB vector store + sentence-transformers)
+   ├── Retriever (app/retriever.py — ChromaDB vector store + Gemini API)
    └── Generator (app/generator.py — Gemini 3.7 Flash with retry logic)
 ```
 
@@ -245,7 +245,7 @@ Copy `.env.example` to `.env` for local setup. In production (Docker / Render), 
 | --- | --- | --- |
 | `GEMINI_API_KEY` | Google Gemini API Key | **Required** |
 | `GEMINI_MODEL` | Gemini LLM Model | `gemini-3.7-flash` |
-| `EMBEDDING_MODEL` | SentenceTransformer model | `sentence-transformers/paraphrase-MiniLM-L3-v2` |
+| `GEMINI_EMBEDDING_MODEL` | Gemini Embedding API Model | `gemini-embedding-001` |
 | `CHROMA_DB_PATH` | Path to persistent vector database | `database/chroma_db` |
 | `CACHE_ENABLED` | Enable answer caching | `true` |
 | `CACHE_TTL_HOURS` | Cache TTL in hours | `168` |

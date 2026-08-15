@@ -4,7 +4,7 @@ This directory contains the scripts for processing markdown documents from `know
 
 ## Changing the Embedding Model
 
-If you decide to optimize memory usage by changing the embedding model (for example, from `sentence-transformers/all-MiniLM-L6-v2` to `sentence-transformers/paraphrase-MiniLM-L3-v2`), you **must** follow these steps to avoid dimension mismatch errors in ChromaDB. Existing embeddings are tied to the dimensions output by the older model.
+If you decide to change the embedding model (for example, switching from `sentence-transformers` to the `gemini-embedding-001` API), you **must** follow these steps to avoid dimension mismatch errors in ChromaDB. Existing embeddings are tied to the dimensions output by the older model.
 
 ### 1. Delete old ChromaDB
 
@@ -17,7 +17,7 @@ rm -rf database/chroma_db
 
 Update your `.env` (or `.env.example`) file:
 ```env
-EMBEDDING_MODEL=sentence-transformers/paraphrase-MiniLM-L3-v2
+GEMINI_EMBEDDING_MODEL=gemini-embedding-001
 ```
 
 ### 3. Rebuild Embeddings & Ingest Knowledge Again
@@ -32,5 +32,5 @@ python3 -m ingestion.ingest
 
 The ingestion script will log the active embedding model being loaded when the pipeline starts:
 ```
-Active embedding model: sentence-transformers/paraphrase-MiniLM-L3-v2
+Active embedding model: gemini-embedding-001
 ```

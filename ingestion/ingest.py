@@ -1,7 +1,7 @@
 """Knowledge base ingestion pipeline for Portfolio RAG Assistant.
 
 Reads markdown files recursively from knowledge/, chunks them,
-generates embeddings with sentence-transformers/paraphrase-MiniLM-L3-v2,
+generates embeddings with the configured Gemini Embedding model,
 and stores them in database/chroma_db.
 """
 
@@ -18,7 +18,6 @@ from pathlib import Path
 from typing import Any, Iterable
 
 import chromadb
-from sentence_transformers import SentenceTransformer
 
 from pathlib import Path
 
@@ -27,6 +26,7 @@ if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
 from app.config import config
+from app.embeddings import GeminiEmbeddingProvider
 
 TARGET_MIN_WORDS = 300
 TARGET_MAX_WORDS = 800
@@ -380,7 +380,10 @@ def ingest(
 
     collection = get_collection(c_dir, c_name)
     logging.info("Active embedding model: %s", config.embedding_model_name)
-    model = SentenceTransformer(config.embedding_model_name)
+    model = GeminiEmbeddingProvider(
+        api_key=config.gemini_api_key,
+        model_name=config.embedding_model_name
+    )
 
     total_chunks = 0
     total_deleted = 0
@@ -399,11 +402,7 @@ def ingest(
 
         for batch in batched(chunks, batch_size):
             texts = [chunk.text for chunk in batch]
-            embeddings = model.encode(
-                texts,
-                normalize_embeddings=True,
-                show_progress_bar=False,
-            ).tolist()
+            embeddings = model.embed_documents(texts)
 
             collection.add(
                 ids=[chunk.chunk_id for chunk in batch],

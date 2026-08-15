@@ -1,6 +1,6 @@
 """Retrieval layer for the Portfolio RAG Assistant.
 
-Accepts a user question, generates an embedding with paraphrase-MiniLM-L3-v2,
+Accepts a user question, generates an embedding with the configured Gemini Embedding model,
 queries the ChromaDB vector store, and returns structured JSON results.
 
 No LLM is called — this module performs retrieval only.
@@ -18,7 +18,7 @@ from pathlib import Path
 from typing import Any
 
 import chromadb
-from sentence_transformers import SentenceTransformer
+from app.embeddings import GeminiEmbeddingProvider
 
 from app.config import config
 
@@ -126,9 +126,12 @@ class PortfolioRetriever:
         if self._model_instance is None:
             with self._model_lock:
                 if self._model_instance is None:
-                    logger.info("Loading embedding model...")
-                    self._model_instance = SentenceTransformer(self.model_name)
-                    logger.info("Embedding model ready")
+                    logger.info("Initializing GeminiEmbeddingProvider...")
+                    self._model_instance = GeminiEmbeddingProvider(
+                        api_key=config.gemini_api_key,
+                        model_name=self.model_name
+                    )
+                    logger.info("GeminiEmbeddingProvider ready")
         return self._model_instance
 
     # ------------------------------------------------------------------
@@ -161,11 +164,7 @@ class PortfolioRetriever:
         logger.info("Query: '%s' | top_k=%d | threshold=%.2f", question, k, threshold)
 
         # Generate embedding
-        embedding = self._model.encode(
-            [question],
-            normalize_embeddings=True,
-            show_progress_bar=False,
-        ).tolist()
+        embedding = self._model.embed_query(question)
 
         # Determine filter
         q_lower = question.lower()
