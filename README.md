@@ -1,29 +1,59 @@
-# Portfolio RAG Assistant
+# Portfolio AI Assistant & Web Application
 
-A recruiter-facing AI assistant that answers questions about **Vinay Kumar Mandalapu** using a **Retrieval-Augmented Generation (RAG)** pipeline.
+A production-quality AI Engineer portfolio website and recruiter-facing RAG assistant for **Vinay kumar Mandalapu**.
 
-Built with **ChromaDB** (vector store), **Sentence Transformers** (embeddings), **Gemini 3.7 Flash** (LLM), and clean modular architecture.
+Built with **Next.js 14+ (App Router)**, **Tailwind CSS**, **Framer Motion**, **FastAPI**, **ChromaDB** (vector store), **Gemini Embedding API**, and **Gemini 3.1 Flash Lite** (LLM).
 
 ---
 
-## Directory Structure
+## 📁 Directory Structure
 
 ```
-.
-├── app/
-│   ├── __init__.py
-│   ├── config.py           # Centralised configuration
-│   ├── rag_pipeline.py     # Single interface ask_question() & service pipeline
-│   ├── retriever.py        # Vector store retriever (ChromaDB + Gemini API)
-│   ├── generator.py        # LLM answer generator (Gemini)
-│   └── cache.py            # File-backed answer cache
+Portfolio/
+│
+├── app/                         # FastAPI RAG Backend
+│   ├── config.py                # Centralised configuration
+│   ├── rag_pipeline.py          # Single interface ask_question() & service pipeline
+│   ├── retriever.py             # Vector store retriever (ChromaDB + Gemini API)
+│   ├── generator.py             # LLM answer generator (Gemini 3.1 Flash Lite)
+│   ├── cache.py                 # File-backed answer cache
+│   └── main.py                  # FastAPI application & API endpoints
+│
+├── frontend/                    # Next.js Recruiter Portfolio Frontend
+│   ├── app/                     # Next.js App Router pages & layout
+│   ├── components/              # Glassmorphic UI components & floating RAG widget
+│   │   ├── Navbar.tsx
+│   │   ├── Hero.tsx
+│   │   ├── About.tsx
+│   │   ├── Skills.tsx
+│   │   ├── Projects.tsx
+│   │   ├── ProjectCard.tsx
+│   │   ├── Timeline.tsx
+│   │   ├── Education.tsx
+│   │   ├── Certifications.tsx
+│   │   ├── Contact.tsx
+│   │   ├── AIChatButton.tsx     # Floating circular bottom-right trigger
+│   │   ├── AIChatWindow.tsx     # RAG AI assistant modal
+│   │   ├── QuestionMenu.tsx     # Predefined recruiter questions selector
+│   │   └── ChatMessage.tsx      # Clean markdown answer bubble
+│   ├── data/
+│   │   ├── questions.json       # Predefined recruiter questions
+│   │   ├── projects.json        # 7 verified AI/ML project specifications
+│   │   └── profile.json         # Verified bio, skills, education & certs
+│   ├── public/
+│   │   ├── profile.jpg          # Vinay's formal profile portrait
+│   │   ├── resume.pdf           # Downloadable resume
+│   │   ├── LinkedIn.pdf         # Downloadable LinkedIn export
+│   │   └── projects/            # 3D project thumbnail cards
+│   ├── package.json
+│   ├── .env.example
+│   └── .env.local               # NEXT_PUBLIC_RAG_API_URL
 │
 ├── ingestion/
-│   ├── __init__.py
-│   ├── ingest.py           # Ingestion script
-│   └── rebuild_db.py       # DB purge & rebuild script
+│   ├── ingest.py                # Knowledge ingestion script
+│   └── rebuild_db.py            # DB purge & rebuild script
 │
-├── knowledge/              # Markdown knowledge base
+├── knowledge/                   # Markdown knowledge base
 │   ├── about_me.md
 │   ├── achievements.md
 │   ├── certifications.md
@@ -31,297 +61,124 @@ Built with **ChromaDB** (vector store), **Sentence Transformers** (embeddings), 
 │   ├── education.md
 │   ├── experience.md
 │   ├── skills.md
-│   └── projects/
-│       ├── bank_customer_churn_prediction.md
-│       ├── bitcoin_price_prediction.md
-│       ├── credit_risk_scoring_engine.md
-│       ├── customer_segmentation.md
-│       ├── enterprise_ecommerce_ai_retention_engine.md
-│       ├── fruit_freshness_classifier.md
-│       └── resume_builder_system.md
+│   └── projects/                # 7 detailed project markdown documents
 │
 ├── database/
-│   └── chroma_db/          # Persistent ChromaDB storage
+│   └── chroma_db/               # Persistent ChromaDB vector storage
 │
-├── tests/
-│   ├── __init__.py
-│   ├── test_retriever.py   # Retriever test battery
-│   ├── test_generator.py   # Generator test suite
-│   ├── test_cache.py       # Answer cache unit tests
-│   └── test_pipeline.py    # Pipeline service unit tests
+├── tests/                       # Python unit & API integration test battery
+│   ├── test_retriever.py
+│   ├── test_generator.py
+│   ├── test_cache.py
+│   ├── test_pipeline.py
+│   └── test_api.py
 │
 ├── scripts/
-│   ├── __init__.py
-│   └── ask.py              # CLI entry point
+│   └── ask.py                   # CLI entry point
 │
-├── .env
-├── .gitignore
-├── requirements.txt
+├── Dockerfile                   # Backend Docker image configuration
+├── requirements.txt             # Backend Python dependencies
+├── render.yaml                  # Render deployment blueprint
 └── README.md
 ```
 
 ---
 
-## Quick Start
+## ⚡ Quick Start
 
-### 1. Install dependencies
+### 1. RAG Backend Setup (FastAPI)
 
 ```bash
+# Install Python dependencies
 pip install -r requirements.txt
-```
 
-### 2. Configure environment
+# Configure environment
+cp .env.example .env
+# Edit .env and set GEMINI_API_KEY=your_gemini_api_key_here
 
-Create `.env` in the root directory:
-
-```env
-GEMINI_API_KEY=your_api_key_here
-GEMINI_MODEL=gemini-3.7-flash
-TOP_K=5
-SIMILARITY_THRESHOLD=1.6
-MAX_CONTEXT_CHUNKS=5
-MAX_OUTPUT_TOKENS=1024
-TEMPERATURE=0.2
-CACHE_ENABLED=true
-CACHE_TTL_HOURS=168
-LOG_LEVEL=INFO
-```
-
-### 3. Run Ingestion
-
-```bash
-python ingestion/ingest.py
-```
-
-Or rebuild the database from scratch:
-
-```bash
-python ingestion/rebuild_db.py
-```
-
-### 4. Query via CLI
-
-```bash
-python scripts/ask.py "Tell me about Vinay"
-```
-
-Bypass cache:
-
-```bash
-python scripts/ask.py --no-cache "What deep learning projects has Vinay built?"
-```
-
-cache management:
-
-```bash
-python scripts/ask.py --cache-stats
-python scripts/ask.py --clear-cache
-```
-
-### 5. Run API Server
-
-```bash
+# Run backend API server
 python run.py
 ```
 
-The server starts on `http://0.0.0.0:8000`. 
+The FastAPI backend starts on `http://localhost:8000`.
+- **Interactive Swagger Docs**: [http://localhost:8000/docs](http://localhost:8000/docs)
+- **Health Check**: [http://localhost:8000/health](http://localhost:8000/health)
 
-- **Interactive API Documentation (Swagger UI)**: [http://localhost:8000/docs](http://localhost:8000/docs)
-- **ReDoc Documentation**: [http://localhost:8000/redoc](http://localhost:8000/redoc)
+---
 
-#### API Endpoints
+### 2. Portfolio Frontend Setup (Next.js)
 
-- **GET /** — Service Status
-  ```bash
-  curl http://localhost:8000/
-  ```
-  Response:
+```bash
+# Navigate to frontend folder
+cd frontend
+
+# Install dependencies
+npm install
+
+# Configure environment variable
+cp .env.example .env.local
+# Set NEXT_PUBLIC_RAG_API_URL=http://localhost:8000 (or your deployed Render URL)
+
+# Start Next.js dev server
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+---
+
+## 🤖 RAG API Endpoints
+
+- **GET /health** — Health check for database, config & LLM connectivity.
+- **POST /ask** — Submit question to RAG Assistant.
   ```json
+  // POST /ask
   {
-      "service": "Vinay Portfolio AI",
-      "status": "running"
+    "question": "What deep learning projects has Vinay worked on?"
   }
   ```
-
-- **GET /health** — Component Health Check
-  ```bash
-  curl http://localhost:8000/health
-  ```
   Response:
   ```json
   {
-      "status": "healthy",
-      "components": {
-          "config": "ok",
-          "database": "ok",
-          "llm": "ok"
-      }
-  }
-  ```
-
-- **GET /sample-questions** — Recruiter Sample Questions
-  ```bash
-  curl http://localhost:8000/sample-questions
-  ```
-  Response:
-  ```json
-  [
-      "What projects has Vinay built?",
-      "What deep learning projects has Vinay worked on?",
-      "What technologies does Vinay know?",
-      "Why should someone hire Vinay?",
-      "What is Vinay's education background?"
-  ]
-  ```
-
-- **POST /ask** — Ask RAG Assistant
-  ```bash
-  curl -X POST http://localhost:8000/ask \
-       -H "Content-Type: application/json" \
-       -d '{"question": "What projects has Vinay built?"}'
-  ```
-  Response:
-  ```json
-  {
-      "answer": "...",
-      "sources": [
-          "projects/fruit_freshness_classifier.md",
-          "projects/bank_customer_churn_prediction.md"
-      ],
-      "cached": false,
-      "response_time_ms": 1200
+    "answer": "Vinay has developed several deep learning systems...",
+    "sources": ["projects/fruit_freshness_classifier.md"],
+    "cached": false,
+    "response_time_ms": 450
   }
   ```
 
 ---
 
-## Testing
+## 🧪 Testing
 
-Run all unit and component tests:
+Run backend test suite (26/26 tests):
 
 ```bash
 python -m unittest discover -s tests -p "test_*.py"
 ```
 
-Run individual test files:
+Verify Next.js frontend build:
 
 ```bash
-python tests/test_retriever.py
-python tests/test_generator.py --offline
-python tests/test_cache.py
-python tests/test_pipeline.py
-python tests/test_api.py
+cd frontend
+npm run build
 ```
 
 ---
 
----
+## 🌐 Production Deployment
 
-## Production Deployment & Configuration
-
-### Architecture Overview
-
-```
-User Query / Client Request
-        │
-        ▼
-   FastAPI Layer (app/main.py)
-   ├── Rate Limiter (slowapi 10 req/min/IP)
-   ├── Security Headers (X-Content-Type-Options, X-Frame-Options, X-XSS-Protection)
-   └── IP-Aware Request Logger
-        │
-        ▼
-   RAG Pipeline Service (app/rag_pipeline.py)
-   ├── Answer Cache (app/cache.py — answer_cache.json)
-   ├── Retriever (app/retriever.py — ChromaDB vector store + Gemini API)
-   └── Generator (app/generator.py — Gemini 3.7 Flash with retry logic)
-```
-
-### Environment Variables Reference
-
-Copy `.env.example` to `.env` for local setup. In production (Docker / Render), supply environment variables directly at runtime:
-
-| Variable | Description | Default / Required |
-| --- | --- | --- |
-| `GEMINI_API_KEY` | Google Gemini API Key | **Required** |
-| `GEMINI_MODEL` | Gemini LLM Model | `gemini-3.7-flash` |
-| `GEMINI_EMBEDDING_MODEL` | Gemini Embedding API Model | `gemini-embedding-001` |
-| `CHROMA_DB_PATH` | Path to persistent vector database | `database/chroma_db` |
-| `CACHE_ENABLED` | Enable answer caching | `true` |
-| `CACHE_TTL_HOURS` | Cache TTL in hours | `168` |
-| `TOP_K` | Number of chunks retrieved | `3` |
-| `SCORE_THRESHOLD` | L2 distance threshold | `1.6` |
-| `LOG_LEVEL` | Application logging verbosity | `INFO` |
-
----
-
-### Render Deployment Steps
-
-#### Option A: Deploy via Render Blueprint (`render.yaml`)
+### Frontend (Vercel)
 1. Push your repository to GitHub.
-2. Log in to [Render Dashboard](https://dashboard.render.com/).
-3. Click **New +** $\rightarrow$ **Blueprint**.
-4. Connect your GitHub repository. Render will automatically detect `render.yaml`.
-5. Under **Environment Variables**, set `GEMINI_API_KEY` to your Gemini API key.
-6. Click **Apply**. Render will build the Docker container and deploy the web service.
+2. Log into [Vercel](https://vercel.com/) and click **Add New Project**.
+3. Import the `Portfolio` repository.
+4. Set **Root Directory** to `frontend`.
+5. Add Environment Variable:
+   - `NEXT_PUBLIC_RAG_API_URL` = `https://your-rag-backend.onrender.com`
+6. Click **Deploy**.
 
-#### Option B: Deploy via Render Web Service UI
-1. Log in to [Render Dashboard](https://dashboard.render.com/).
-2. Click **New +** $\rightarrow$ **Web Service**.
-3. Connect your GitHub repository.
-4. Select **Docker** as the Runtime.
-5. Set the Health Check Path to `/health`.
-6. Add environment variable `GEMINI_API_KEY` under **Environment**.
-7. Click **Create Web Service**.
-
----
-
-### Local Docker Deployment
-
-#### Build Docker Image
-```bash
-docker build -t vinay-portfolio-rag .
-```
-
-#### Run Docker Container
-```bash
-docker run -d \
-  -p 8000:8000 \
-  -e GEMINI_API_KEY="your_gemini_api_key_here" \
-  --name vinay-portfolio-rag-app \
-  vinay-portfolio-rag
-```
-
-#### Test Running Container
-```bash
-curl http://localhost:8000/health
-```
-
----
-
-### Updating Knowledge Base Workflow
-
-When updating portfolio information or adding new projects:
-
-1. **Add / Edit Markdown Files**:
-   Edit files in `knowledge/` or `knowledge/projects/`. Ensure YAML frontmatter specifies `category`, `domain`, and `project_name`.
-
-2. **Rebuild Vector Database**:
-   ```bash
-   python ingestion/rebuild_db.py
-   ```
-   This clears and re-populates the persistent vector index in `database/chroma_db/`.
-
-3. **Verify Retrieval**:
-   ```bash
-   python tests/test_retriever.py
-   ```
-
-4. **Commit & Push**:
-   Commit the updated markdown files and `database/chroma_db/` folder to git:
-   ```bash
-   git add knowledge/ database/chroma_db/
-   git commit -m "Update portfolio knowledge base"
-   git push origin main
-   ```
-   *Render will automatically trigger a build and deploy the updated application!*
+### Backend (Render / Docker)
+1. Log into [Render Dashboard](https://dashboard.render.com/).
+2. Deploy via Render Blueprint (`render.yaml`) or Web Service using **Docker** runtime.
+3. Set environment variable `GEMINI_API_KEY`.
+4. Render automatically builds and hosts the FastAPI container.
