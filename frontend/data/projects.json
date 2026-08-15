@@ -1,0 +1,93 @@
+[
+  {
+    "id": "bank-churn-prediction",
+    "title": "Bank Customer Churn Prediction (ANN)",
+    "domain": "Deep Learning",
+    "image": "/projects/bank_churn.png",
+    "description": "Predicts bank customer churn to improve retention and prevent revenue loss using an Artificial Neural Network.",
+    "problem": "Banks lose significant revenue when customers leave unnoticed. Manual customer retention tracking fails to detect complex non-linear behavioral patterns before churn occurs.",
+    "solution": "Built an end-to-end Deep Learning pipeline using Keras/TensorFlow. Trained a multi-layer ANN with EarlyStopping, feature scaling, and category encoding, deployed as an interactive Streamlit web application.",
+    "technologies": ["Python", "TensorFlow", "Keras", "Scikit-Learn", "Pandas", "NumPy", "Streamlit"],
+    "githubUrl": "https://github.com/vinay98485/bank-churn-prediction",
+    "liveDemoUrl": "https://bank-churn-prediction-vinay-app.streamlit.app/",
+    "featured": true
+  },
+  {
+    "id": "fruit-freshness-classifier",
+    "title": "Fruit Freshness Classifier (CNN)",
+    "domain": "Computer Vision",
+    "image": "/projects/fruit_freshness.png",
+    "description": "Automated computer vision system using Convolutional Neural Networks to inspect and classify fruit freshness.",
+    "problem": "Manual food quality inspection in agriculture, supply chains, and retail is slow, costly, and subjective.",
+    "solution": "Developed a 14-class CNN image classifier with 99.01% test accuracy using Conv2D, Batch Normalization, and Dropout layers. Features top-3 confidence scores and instant Streamlit image analysis.",
+    "technologies": ["Python", "TensorFlow", "Keras", "OpenCV", "Pillow", "Scikit-Learn", "Streamlit"],
+    "githubUrl": "https://github.com/vinay98485/fruit-freshness-classifier",
+    "liveDemoUrl": "https://fruit-freshness-classifier-vinay-app.streamlit.app/",
+    "featured": true
+  },
+  {
+    "id": "enterprise-ecommerce-retention-engine",
+    "title": "Enterprise E-Commerce AI Retention Engine",
+    "domain": "Machine Learning",
+    "image": "/projects/ecommerce_retention.png",
+    "description": "Full-stack ML engine processing 540,000+ retail transactions for customer RFM segmentation, churn prediction, and CLTV forecasting.",
+    "problem": "Traditional e-commerce analytics only identify lost customers post-churn, resulting in reactive interventions and wasted ad spend.",
+    "solution": "Engineered a multi-phase system combining K-Means customer clustering, Random Forest churn prediction (with data leakage isolation), and XGBoost regression for lifetime value forecasting.",
+    "technologies": ["Python", "Pandas", "Scikit-Learn", "XGBoost", "Plotly", "GridSearchCV", "Streamlit"],
+    "githubUrl": "https://github.com/vinay98485/enterprise-ml-engine",
+    "liveDemoUrl": "https://enterprise-ml-engine-vinay-app.streamlit.app/",
+    "featured": true
+  },
+  {
+    "id": "credit-risk-scoring-engine",
+    "title": "End-to-End Credit Risk Scoring Engine",
+    "domain": "Machine Learning",
+    "image": "/projects/credit_risk.png",
+    "description": "Production REST API for real-time loan default risk probability calculation and automated loan approval decisions.",
+    "problem": "Financial institutions face heavy loss from false-negative loan approvals due to imbalanced credit risk data.",
+    "solution": "Trained an XGBoost classification model optimized for Precision, Recall, and ROC-AUC. Serialized scalers/models with Joblib and served real-time score evaluations via a Django REST API.",
+    "technologies": ["Python", "XGBoost", "Scikit-Learn", "Django", "Joblib", "Pandas", "REST API"],
+    "githubUrl": "https://github.com/vinay98485/credit-risk-engine",
+    "liveDemoUrl": null,
+    "featured": true
+  },
+  {
+    "id": "intelligent-customer-segmentation",
+    "title": "Intelligent Customer Segmentation Engine",
+    "domain": "Unsupervised ML",
+    "image": "/projects/ecommerce_retention.png",
+    "description": "Interactive unsupervised analytics dashboard grouping customers into actionable business personas using K-Means and the Elbow Method.",
+    "problem": "Retailers struggle to deliver targeted marketing campaigns without clear, data-driven customer personas.",
+    "solution": "Implemented K-Means clustering on age, income, and spending data. Proved optimal K=5 mathematically via WCSS Elbow plots and built an interactive 2D customer persona map.",
+    "technologies": ["Python", "Scikit-Learn", "K-Means", "Plotly Express", "Pandas", "Streamlit"],
+    "githubUrl": "https://github.com/vinay98485/customer-segmentation",
+    "liveDemoUrl": "https://customer-segmentation-vinay-app.streamlit.app/",
+    "featured": false
+  },
+  {
+    "id": "bitcoin-price-prediction",
+    "title": "Bitcoin Price Prediction & Blockchain Storage",
+    "domain": "Financial ML",
+    "image": "/projects/bank_churn.png",
+    "description": "Financial time-series predictive analytics system evaluating Linear Regression, ARIMA, and SVR with SPCE dimensionality reduction.",
+    "problem": "Cryptocurrency price volatility makes market trend forecasting noisy and historical datasets susceptible to tampering.",
+    "solution": "Applied Subspace Learning (SPCE) to reduce feature space from 6 to 4 dimensions (+12% accuracy gain). Compared LR, ARIMA (96%), and SVM, while retrieving raw records via Web3 Solidity smart contracts.",
+    "technologies": ["Python", "Scikit-Learn", "Statsmodels", "pmdarima", "Web3", "Solidity", "Tkinter"],
+    "githubUrl": "https://github.com/vinay98485/Bitcoin-Price-Prediction",
+    "liveDemoUrl": null,
+    "featured": false
+  },
+  {
+    "id": "resume-builder-system",
+    "title": "Secure Resume Builder System (AES-256)",
+    "domain": "Full-Stack Web",
+    "image": "/projects/credit_risk.png",
+    "description": "Full-stack web application enabling custom resume creation with client-side dynamic rendering and encrypted server storage.",
+    "problem": "Users need structured resume rendering without risking server-side plain text document data exposure.",
+    "solution": "Built a Django + MySQL web platform using PyAES (AES-256 CTR mode) and PBKDF2 key derivation for decrypt-on-download security. Rendered layouts dynamically via Matplotlib and OpenCV image resizing.",
+    "technologies": ["Python", "Django", "MySQL", "PyAES", "PBKDF2", "OpenCV", "Matplotlib"],
+    "githubUrl": "https://github.com/vinay98485",
+    "liveDemoUrl": null,
+    "featured": false
+  }
+]

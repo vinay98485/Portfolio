@@ -45,7 +45,7 @@ class Config:
 
     # Gemini LLM Settings
     gemini_api_key: str = field(repr=False, default="")
-    gemini_model: str = "gemini-3.7-flash"
+    gemini_model: str = "gemini-3.1-flash-lite"
     max_output_tokens: int = 1024
     temperature: float = 0.2
 
@@ -148,7 +148,7 @@ def load_config(validate: bool = True, env: dict[str, str] | None = None) -> Con
 
     return Config(
         gemini_api_key=api_key,
-        gemini_model=get_env("GEMINI_MODEL", "gemini-3.7-flash"),
+        gemini_model=get_env("GEMINI_MODEL", "gemini-3.1-flash-lite"),
         gemini_embedding_model=emb_model,
         chroma_db_path=chroma_path,
         knowledge_dir=k_dir,

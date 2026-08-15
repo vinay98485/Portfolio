@@ -1,0 +1,44 @@
+{
+  "name": "Vinay kumar Mandalapu",
+  "title": "AI/ML Engineer | Python Developer",
+  "bio": "Computer Science Engineering student with strong practical expertise in Artificial Intelligence, Machine Learning, Deep Learning, Computer Vision, and Generative AI (RAG). Experienced in model training, data preprocessing, feature engineering, and full-stack API deployment with FastAPI, Django, MySQL, and Streamlit.",
+  "location": "Hyderabad, Telangana, India",
+  "email": "vinaykumar98485@gmail.com",
+  "phone": "+91 6304209763",
+  "githubUrl": "https://github.com/vinay98485/",
+  "linkedInUrl": "https://www.linkedin.com/in/vinay-kumar-mandalapu",
+  "profileImage": "/profile.jpg",
+  "resumePdf": "/resume.pdf",
+  "linkedInPdf": "/LinkedIn.pdf",
+  "education": [
+    {
+      "degree": "Bachelor of Technology in Computer Science (Computational Science)",
+      "institution": "Siddhartha Institute of Engineering & Technology",
+      "period": "2022 – 2026",
+      "score": "CGPA: 8.3 / 10.0"
+    },
+    {
+      "degree": "Senior Secondary Education (Class XII)",
+      "institution": "DR. B.S.R. Junior College",
+      "period": "2020 – 2022",
+      "score": "Percentage: 84.3%"
+    }
+  ],
+  "certifications": [
+    { "name": "Python Programming", "issuer": "GeeksforGeeks" },
+    { "name": "Python Fundamentals", "issuer": "Infosys Springboard" },
+    { "name": "AI Fundamentals", "issuer": "Professional Certification" },
+    { "name": "AI Skills Fest 2026", "issuer": "Microsoft / Industry Fest" },
+    { "name": "SAP Professional Fundamentals", "issuer": "SAP" },
+    { "name": "Intro to Generative AI for Developers With Copilot", "issuer": "GitHub / Microsoft" },
+    { "name": "Certificate of Completion: Claude 101", "issuer": "Anthropic" }
+  ],
+  "skills": {
+    "programming": ["Python", "Java", "C", "SQL (MySQL)"],
+    "machineLearning": ["Scikit-Learn", "Feature Engineering", "Model Evaluation", "Logistic Regression", "Linear Regression", "SVM", "ARIMA", "SPCE Subspace Learning", "XGBoost", "Random Forest", "K-Means"],
+    "deepLearning": ["TensorFlow", "Keras", "ANN (Artificial Neural Networks)", "CNN (Convolutional Neural Networks)", "EarlyStopping", "Batch Normalization"],
+    "generativeAI": ["RAG (Retrieval-Augmented Generation)", "LLM APIs (Gemini, Claude)", "Vector Databases (ChromaDB)", "GitHub Copilot"],
+    "backend": ["FastAPI", "Django", "REST APIs", "Streamlit", "MySQL"],
+    "tools": ["Docker", "Git", "GitHub", "Linux", "Windows"]
+  }
+}
