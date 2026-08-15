@@ -132,7 +132,7 @@ def on_startup() -> None:
     logger.info("=" * 60)
     logger.info("Vinay Portfolio AI Assistant v1.0.0 — Starting")
     logger.info(f"  Gemini Model     : {config.gemini_model}")
-    logger.info(f"  Embedding Model  : {config.embedding_model}")
+    logger.info(f"  Embedding Model  : {config.gemini_embedding_model}")
     logger.info(f"  ChromaDB Path    : {config.chroma_db_path}")
     logger.info(f"  Top K            : {config.top_k}")
     logger.info(f"  Score Threshold  : {config.score_threshold}")
