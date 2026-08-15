@@ -17,6 +17,7 @@ from __future__ import annotations
 import json
 import logging
 import time
+import threading
 from dataclasses import asdict, dataclass, field
 from typing import Any
 
@@ -229,13 +230,16 @@ class PortfolioGenerator:
             )
 
         self._client_instance = None
+        self._client_lock = threading.Lock()
         logger.info("Generator initialized (lazy loading enabled)")
 
     @property
     def _client(self) -> Any:
         if self._client_instance is None:
-            self._client_instance = genai.Client(api_key=self.api_key)
-            logger.info("Gemini client initialized (%s)", self.model_name)
+            with self._client_lock:
+                if self._client_instance is None:
+                    self._client_instance = genai.Client(api_key=self.api_key)
+                    logger.info("Gemini client initialized (%s)", self.model_name)
         return self._client_instance
 
     def _call_gemini(self, user_prompt: str) -> str:

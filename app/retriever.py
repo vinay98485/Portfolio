@@ -12,6 +12,7 @@ import argparse
 import json
 import logging
 import math
+import threading
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any
@@ -104,23 +105,30 @@ class PortfolioRetriever:
         self._collection_instance = None
         self._model_instance = None
 
+        self._model_lock = threading.Lock()
+        self._collection_lock = threading.Lock()
+
         logger.info("Retriever initialized (lazy loading enabled)")
 
     @property
     def _collection(self) -> Any:
         if self._collection_instance is None:
-            logger.info("Connecting to ChromaDB at %s", self.chroma_dir)
-            self._client_instance = chromadb.PersistentClient(path=str(self.chroma_dir))
-            self._collection_instance = self._client_instance.get_collection(name=self.collection_name)
-            logger.info("ChromaDB connected (collection='%s', count=%d)", self.collection_name, self._collection_instance.count())
+            with self._collection_lock:
+                if self._collection_instance is None:
+                    logger.info("Connecting ChromaDB...")
+                    self._client_instance = chromadb.PersistentClient(path=str(self.chroma_dir))
+                    self._collection_instance = self._client_instance.get_collection(name=self.collection_name)
+                    logger.info("ChromaDB ready")
         return self._collection_instance
 
     @property
     def _model(self) -> Any:
         if self._model_instance is None:
-            logger.info("Loading embedding model: %s", self.model_name)
-            self._model_instance = SentenceTransformer(self.model_name)
-            logger.info("Embedding model loaded (%s)", self.model_name)
+            with self._model_lock:
+                if self._model_instance is None:
+                    logger.info("Loading embedding model...")
+                    self._model_instance = SentenceTransformer(self.model_name)
+                    logger.info("Embedding model ready")
         return self._model_instance
 
     # ------------------------------------------------------------------

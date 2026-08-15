@@ -14,6 +14,7 @@ import gc
 import logging
 import os
 import time
+import threading
 from typing import Any
 
 try:
@@ -127,6 +128,7 @@ class RAGPipeline:
 
 
 # Global singleton instance for module-level ask_question interface
+_pipeline_lock = threading.Lock()
 _default_pipeline: RAGPipeline | None = None
 
 
@@ -134,7 +136,9 @@ def get_pipeline() -> RAGPipeline:
     """Get or create the global default RAGPipeline instance."""
     global _default_pipeline
     if _default_pipeline is None:
-        _default_pipeline = RAGPipeline()
+        with _pipeline_lock:
+            if _default_pipeline is None:
+                _default_pipeline = RAGPipeline()
     return _default_pipeline
 
 
